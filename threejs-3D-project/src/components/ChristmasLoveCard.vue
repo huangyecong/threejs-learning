@@ -110,28 +110,30 @@ pointLight.position.set(0.1, 2.4, 0);
 pointLight.castShadow = true;// 投射阴影
 scene.add(pointLight);
 
+/******************************************创建3个点光源 ********************/
 // 创建点光源组
 const pointLightGroup = new THREE.Group()
-pointLightGroup.position.set(-8, 2.5, -1.5)
+pointLightGroup.position.set(-8, 2.5, -1.5)// 点光源组的位置
 let radius = 3
 let pointLightArr: THREE.Mesh<THREE.SphereGeometry, THREE.MeshStandardMaterial, THREE.Object3DEventMap>[] = []
+//  创建3个点光源
 for (let i = 0; i < 3; i++) {
   // 创建球体当灯泡
   const sphereGeometry = new THREE.SphereGeometry(0.2, 32, 32)
   const sphereMaterial = new THREE.MeshStandardMaterial({
     color: 0xffffff,
     emissive: 0xffffff,
-    emissiveIntensity: 10
-  })
+    emissiveIntensity: 10// 强度
+  })// 使用可以反光的材质
   const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial)
   pointLightArr.push(sphere)
   sphere.position.set(
-    radius * Math.cos((i * 2 * Math.PI) / 3),
-    Math.cos((i * 2 * Math.PI) / 3),
-    radius * Math.sin((i * 2 * Math.PI) / 3)
+    radius * Math.cos((i * 2 * Math.PI) / 3),// x轴 位于半径为3的圆，的每三分之一处
+    Math.cos((i * 2 * Math.PI) / 3),// y轴
+    radius * Math.sin((i * 2 * Math.PI) / 3)// z轴
   );
 
-  let pointLight = new THREE.PointLight(0xffffff, 50)
+  let pointLight = new THREE.PointLight(0xffffff, 50)// 点光源亮度为50
   sphere.add(pointLight)
 
   pointLightGroup.add(sphere)
@@ -144,11 +146,12 @@ let options = {
 };
 gsap.to(options, {
   angle: Math.PI * 2,
-  duration: 10,
-  repeat: -1,
-  ease: "linear",
+  duration: 10,// 运动周期，10s转一圈
+  repeat: -1,//重复次数， -1表示无限循环
+  ease: "linear",// 运动类型，linear线性运动
   onUpdate: () => {
-    pointLightGroup.rotation.y = options.angle;
+    // 上下浮动
+    pointLightGroup.rotation.y = options.angle;//根据角度进行旋转
     pointLightArr.forEach((item, index) => {
       item.position.set(
         radius * Math.cos((index * 2 * Math.PI) / 3),
