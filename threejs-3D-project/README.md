@@ -20,7 +20,7 @@ You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/
 安装[three.js](https://threejs.org/)、补件动画库[gsap](https://greensock.com/get-started/#tweening-basics)
 
 ```
-yarn add three gasp
+yarn add three gsap
 ```
 安装对应的 .d.ts 文件包 给ts做代码提示用的 如果没有ts可以选择跳过 
 ```
