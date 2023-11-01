@@ -1,5 +1,12 @@
 <template>
   <!-- ChristmasLoveCard.vue 圣诞节爱心3D贺卡 -->
+  <div class="scenes" :style="{
+    transform: `translate3d(0, ${-scenesIndex * 100}vh, 0)`,
+  }">
+    <div v-for="(item, index) in scenes" :key="index" class="scenes-container">
+      <h1 class="title">{{ item.text }}</h1>
+    </div>
+  </div>
 </template>
 
 
@@ -11,12 +18,13 @@
  * 4、渲染
 */
 import * as THREE from "three"// 引入three.js
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"// 导入轨道控制器
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"// 导入gltf 模型加载器
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader"// 导入draco  模型解码器
-import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader"// 环境纹理加载器
-import { Water } from "three/examples/jsm/objects/Water2"// 水波纹加载器
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";// 导入轨道控制器
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";// 导入gltf 模型加载器
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";// 导入draco  模型解码器
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";// 环境纹理加载器
+import { Water } from "three/examples/jsm/objects/Water2";// 水波纹加载器
 import gsap from "gsap"; // 补间动画
+import { ref } from "vue";
 
 /************************************************************ s:初始化场景、相机、渲染器 **********************************************/
 // 初始化场景
@@ -161,6 +169,113 @@ gsap.to(options, {
     });
   },
 });
+/******************************************创建文字场景 ********************/
+// 使用补间动画移动相机
+let timeLine1 = gsap.timeline();
+let timeLine2 = gsap.timeline();
+// 定义相机移动函数
+const translateCamera = (position: { x: number; y: number; z: number; }, target: { x: number; y: number; z: number; }) => {
+  // position 原来的位置，target 目标位置
+  timeLine1.to(camera.position, {
+    x: position.x,
+    y: position.y,
+    z: position.z,
+    duration: 1,
+    ease: "power2.inOut"
+  });
+
+  timeLine2.to(controls.target, {
+    x: target.x,
+    y: target.y,
+    z: target.z,
+    duration: 1,
+    ease: "power2.inOut"
+  })
+}
+// 创建5个文字场景
+let scenes = [
+  {
+    text: "test-1",
+    callback: () => {
+      // 执行函数切换位置
+      // 这些坐标都是建模的时候算好的
+      translateCamera(
+        new THREE.Vector3(-3.23, 3, 4.06),
+        new THREE.Vector3(-8, 2, 0)
+      );
+    }
+  },
+  {
+    text: "test-2",
+    callback: () => {
+      translateCamera(new THREE.Vector3(7, 0, 23), new THREE.Vector3(0, 0, 0));
+    }
+  },
+  {
+    text: "test-3",
+    callback: () => {
+      translateCamera(new THREE.Vector3(10, 3, 0), new THREE.Vector3(5, 2, 0));
+    }
+  },
+  {
+    text: "test-4",
+    callback: () => {
+      translateCamera(new THREE.Vector3(7, 0, 23), new THREE.Vector3(0, 0, 0));
+    }
+  },
+  {
+    text: "test-5",
+    callback: () => {
+      translateCamera(
+        new THREE.Vector3(-20, 1.3, 6.6),
+        new THREE.Vector3(5, 2, 0)
+      );
+    }
+  }
+]
+
+let scenesIndex = ref<number>(0)// 记录当前的场景索引值
+let isAnimate = false
+// 监听鼠标滚轮事件
+window.addEventListener(
+  "wheel",
+  (e) => {
+    if (isAnimate) return;
+    isAnimate = true;
+    if (e.deltaY > 0) {
+      scenesIndex.value++;
+      if (scenesIndex.value > scenes.length - 1) {
+        scenesIndex.value = 0
+      }
+    }
+    scenes[scenesIndex.value].callback();
+    setTimeout(() => {
+      isAnimate = false
+    }, 1000);
+  }, false
+)
+
+// 实例化创建漫天星星
+/*InstancedMesh一种具有实例化渲染支持的特殊版本的Mesh。你可以使用 InstancedMesh 来渲染大量具有相同几何体与材质、但具有不同世界变换的物体。 使用 InstancedMesh 将帮助你减少 draw call 的数量，从而提升你应用程序的整体渲染性能。
+* InstancedMesh( geometry : BufferGeometry, material : Material, count : Integer )
+* geometry - 一个 BufferGeometry 的实例
+* material - 一个 Material 的实例。默认为一个新的 MeshBasicMaterial 
+* count - 实例的数量
+*/
+let starsInstance = new THREE.InstancedMesh(
+  new THREE.SphereGeometry(0.1, 32, 32),
+  new THREE.MeshStandardMaterial({
+    color: 0xffffff,// 材质的颜色(Color)，默认值为白色 (0xffffff)。
+    emissive: 0xffffff,// 材质的放射（光）颜色，基本上是不受其他光照影响的固有颜色。默认为黑色。
+    emissiveIntensity: 10,//放射光强度。调节发光颜色。默认为1。
+  }),
+  100
+)
+// 随机分布到天上
+// 创建爱心路径
+// 根据爱心路径，获取点
+// 创建爱心动画
+
 
 /********************************************************************** s:渲染 ****************************************************/
 // 渲染
@@ -185,5 +300,25 @@ canvas {
   position: fixed;
   left: 0;
   top: 0;
+}
+
+.scenes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  pointer-events: none;
+  transition: all 1s;
+}
+
+.scenes-container {
+  width: 100vw;
+  height: 100vh
+}
+
+.title {
+  padding: 100px 50px;
+  font-size: 50px;
+  color: #fff
 }
 </style>
