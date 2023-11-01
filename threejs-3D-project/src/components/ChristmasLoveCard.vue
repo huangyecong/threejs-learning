@@ -79,7 +79,7 @@ rgbeLoader.load("/public/textures/sky.hdr", (textures: any) => {
 // 加载模型
 gltfLoader.load("/public/model/scene.glb", (gltf) => {
   const model = gltf.scene
-  // 隐藏水面
+  // 隐藏水面、traverse是threejs中用来递归遍历的方法
   model.traverse((child: any) => {
     if (child.name === "Plane") {
       child.visible = false
