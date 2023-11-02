@@ -1,15 +1,13 @@
 <template>
-  <!-- 汽车产品展示项目与原理 -->
+  <!-- 宝马4s汽车展示与选配应用 -->
   <div id="container">
     <!-- 
   物理网格材质、动画库gasp
   1、创建场景、相机、渲染器
   2、设置网格地面GridHelper、透明度opcity
   3、导入添加控制器OrbitContrils, 360°旋转
-  
   4、导入gltf模型  gltf loader模型解压缩
   5、添加多个灯光（物理材质需要光，车灯设置自发光）DirectionalLight
-
   6、
   7、
   8、
@@ -58,6 +56,13 @@ const carGlassMaterial = new THREE.MeshPhysicalMaterial({
   roughness: 0,
   transmission: 1.0, // 透光率
 })
+
+const detailsMaterial = new THREE.MeshPhysicalMaterial({
+  color: '0xffffff',
+  metalness: 1.0,
+  roughness: 0.4,
+})
+
 // 设置车身颜色
 const setCarColor = (color: string) => {
   carBodyMaterial.color.set(color)
@@ -127,6 +132,7 @@ onMounted(() => {
    * 1、导入模型解压缩、模型加载器
    * 2、加载添加汽车模型
    * 3、添加平行光
+   * 4、设置汽车材质
    * gltf与glb的区别： gltf文件类似与json格式而glb是以二进制流进行存储
    */
 
@@ -137,11 +143,13 @@ onMounted(() => {
   loaders.setDRACOLoader(dracoLoader)
 
   // 加载汽车模型
-
   loaders.load('/public/model/car.glb', (gltf) => {
     const car = gltf.scene
     car.traverse((child: any) => {
       if (child.isMesh) {
+        // 遍历场景里面的所有元素都允许接受和投射阴影
+        child.castShadow = true
+        child.receiveShadow = true
         // 模型里对物体已经设置好了相应的名字
         console.log(child.name) // 获取模型相应的对象
         // 这里就只演示车身、烟囱，其他略
@@ -149,13 +157,13 @@ onMounted(() => {
           carBody.value = child
           carBody.value.material = carBodyMaterial
         }
-        // 设置玻璃材质
-        if (child.name.includes('glass')) {
-          carGlass.value = child
-          carGlass.value.material = carGlassMaterial
-        }
+        // 设置玻璃材质(添加该代码，控制会报错)
+        // if (child.name.includes('glass')) {
+        //   carGlass.value = child
+        //   carGlass.value.material = carGlassMaterial
+        // }
 
-        //轮缘 、座位材质设置
+        //轮缘 、座位材质设置(添加该代码，控制会报错)
         // if (
         //   child.name.includes('rim_fl') ||
         //   child.name.includes('rim_fr') ||
@@ -199,12 +207,13 @@ onMounted(() => {
 .choose {
   color: black;
   position: absolute;
-  top: 200px;
+  top: 20px;
   width: 200px;
   left: calc(100% - 400px);
 }
 
 .choose-list {
+  margin-top: 10px;
   display: flex;
   justify-content: space-evenly;
 }

@@ -47,3 +47,16 @@ THREE.DRACOLoader: Unexpected geometry type.
 
 ![Alt text](image.png)
 ![Alt text](image-2.png)
+
+## 项目查找
+- 宝马4s汽车展示与选配应用： Car.vue
+- 圣诞节爱心3D贺卡： ChristmasLoveCard.vue
+- 酷炫球形机器人展示：
+- 全景看房项目代码view360：
+- 水晶3D小熊：
+- 酷炫3D官网：
+- 酷炫3D地球：
+- 酷炫3D字体：
+- 世界杯点球小游戏：
+- 酷炫3D导弹飞行演示：
+- 水天一色小岛：

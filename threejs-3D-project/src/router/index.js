@@ -4,12 +4,14 @@ import {createRouter, createWebHashHistory, createWebHistory} from "vue-router"
 import Home from "../home.vue";
 import Car from "../components/Car.vue";
 import ChristmasLoveCard from "../components/ChristmasLoveCard.vue";
+import Bear from "../components/3DBear.vue";
 
 // 2. 定义路由配置redirect: '/Home'
 const routes = [
   { path: "/",name:"Home", component: Home },
   { path: "/ChristmasLoveCard",name:"ChristmasLoveCard", component: ChristmasLoveCard },
   { path: "/Car",name:"Car", component: Car },
+  { path: "/Bear",name:"Bear", component: Bear },
 ];
 
 // 3. 创建路由实例
